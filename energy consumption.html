@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Energy Consumption Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+        
+        #dashboard-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            padding: 2em;
+        }
+        
+        .widget {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1em;
+            margin: 1em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1 1 300px;
+        }
+        
+        #energy-chart {
+            height: 300px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Home Energy Consumption Dashboard</h1>
+        <p>Monitor and optimize your home's energy usage for a sustainable future</p>
+    </header>
+
+    <div id="dashboard-container">
+        <div class="widget" id="energy-chart">
+            <!-- Energy Consumption Chart will be rendered here -->
+            <canvas id="chart"></canvas>
+        </div>
+        <div class="widget">
+            <h2>Energy Usage Summary</h2>
+            <p>Total Energy Consumption: <span id="total-consumption">0 kWh</span></p>
+            <p>Today's Usage: <span id="today-usage">0 kWh</span></p>
+        </div>
+        <div class="widget">
+            <h2>Energy Efficiency Tips</h2>
+            <ul>
+                <li>Turn off lights when not in use.</li>
+                <li>Use energy-efficient appliances.</li>
+                <li>Set thermostat to optimal temperature.</li>
+                <li>Unplug devices when fully charged.</li>
+                <li>Install energy-efficient light bulbs.</li>
+                <!-- Add more tips as needed -->
+            </ul>
+        </div>
+        <div class="widget">
+            <h2>Monthly Energy Trends</h2>
+            <p>Understand your monthly energy consumption patterns to make informed decisions.</p>
+            <select id="selectMonth" onchange="updateChartByMonth()">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+                <!-- Add more months as needed -->
+            </select>
+            <canvas id="monthly-chart"></canvas>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Home Energy Dashboard</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const energyData = [30, 45, 60, 35, 50, 40, 55];
+            updateChart(energyData);
+            document.getElementById('total-consumption').innerText = calculateTotalConsumption(energyData) + ' kWh';
+            document.getElementById('today-usage').innerText = energyData[energyData.length - 1] + ' kWh';
+
+            // Sample monthly data (replace with real-time data)
+            const monthlyData = [{
+                month: 'January',
+                consumption: 300
+            }, {
+                month: 'February',
+                consumption: 280
+            }, {
+                month: 'March',
+                consumption: 320
+            }, {
+                month: 'April',
+                consumption: 574
+            }, {
+                month: 'May',
+                consumption: 325
+            }, {
+                month: 'June',
+                consumption: 250
+            }, {
+                month: 'July',
+                consumption: 290
+            }, {
+                month: 'August',
+                consumption: 352
+            }, {
+                month: 'September',
+                consumption: 465
+            }, {
+                month: 'Octomber',
+                consumption: 620
+            }, {
+                month: 'November',
+                consumption: 380
+            }, {
+                month: 'December',
+                consumption: 320
+            }, ];
+
+
+            updateMonthlyChart(monthlyData);
+        });
+
+        function updateChart(data) {
+            const energyChartCanvas = document.getElementById('chart');
+            const ctx = energyChartCanvas.getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({
+                        length: data.length
+                    }, (_, i) => `Day ${i + 1}`),
+                    datasets: [{
+                        label: 'Energy Consumption (kWh)',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateTotalConsumption(data) {
+            return data.reduce((total, value) => total + value, 0);
+        }
+
+        function updateMonthlyChart(monthlyData) {
+            const monthlyChartCanvas = document.getElementById('monthly-chart');
+            const ctxMonthly = monthlyChartCanvas.getContext('2d');
+
+            new Chart(ctxMonthly, {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.map(item => item.month),
+                    datasets: [{
+                        label: 'Monthly Consumption (kWh)',
+                        data: monthlyData.map(item => item.consumption),
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartByMonth() {
+            const selectedMonthIndex = document.getElementById('selectMonth').value;
+            const selectedMonthData = getMonthlyData()[selectedMonthIndex].data;
+            updateChart(selectedMonthData);
+        }
+
+        function getMonthlyData() {
+            // Replace this function with your mechanism to fetch monthly data from the server or database
+            return [{
+                    month: 'January',
+                    data: [30, 45, 60, 35, 50, 40, 55]
+                }, {
+                    month: 'February',
+                    data: [35, 40, 55, 30, 45, 38, 60]
+                }, {
+                    month: 'March',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'April',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'May',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'June',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'July',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'August',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'September',
+                    data: [40, 55, 45, 38, 50, 42, 58]
+                }, {
+                    month: 'October',
+                    data: [23, 55, 65, 48, 27, 78, 58]
+                }, {
+                    month: 'November',
+                    data: [50, 95, 65, 18, 55, 24, 85]
+                }, {
+                    month: 'December',
+                    data: [65, 85, 5, 78, 59, 42, 98]
+                },
+
+                // Add more months as needed
+            ];
+        }
+    </script>
+</body>
+
+</html>
